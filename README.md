@@ -17,7 +17,7 @@ This simple script uses Wget to fetch chemical data from [PubChem](http://pubche
 
 ## Tips
 
-I use `chemdraw Professional Version 15.0.0.106`. Maybe it is necessary to modify the source code to detect the chemdraw window correctly, if another version of chemdraw is used.
+I use `chemdraw Professional Version 15.0.0.106`.  If another version of chemdraw is used, maybe it is necessary to modify the source code to detect the chemdraw window correctly.
 ```
 #ifWinActive ChemDraw ahk_class CSWFrame
 ```
