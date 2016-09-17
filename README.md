@@ -17,7 +17,7 @@ This simple script uses Wget to fetch chemical data from pubchem. Most can be do
 
 
 ## Demo
-!(https://raw.githubusercontent.com/phylixal/EnhanceChemdraw/master/IM1.png)[]
-!(https://raw.githubusercontent.com/phylixal/EnhanceChemdraw/master/IM2.png)[]
-!(https://raw.githubusercontent.com/phylixal/EnhanceChemdraw/master/IM3.png)[]
-!(https://raw.githubusercontent.com/phylixal/EnhanceChemdraw/master/IM4.png)[]
+![](https://raw.githubusercontent.com/phylixal/EnhanceChemdraw/master/IM1.png)
+![](https://raw.githubusercontent.com/phylixal/EnhanceChemdraw/master/IM2.png)
+![](https://raw.githubusercontent.com/phylixal/EnhanceChemdraw/master/IM3.png)
+![](https://raw.githubusercontent.com/phylixal/EnhanceChemdraw/master/IM4.png)
