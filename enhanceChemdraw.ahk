@@ -1,4 +1,5 @@
-﻿;;为 chemdraw 增加 cas 号和结构式的转换功能，后端为pubchem
+;;为 chemdraw 增加 cas 号和结构式的转换功能，后端为pubchem
+; https://github.com/phylixal/EnhanceChemdraw/
 ; autohotkey_L 1.1.10.1
 fileinstall, wget.exe, wget.exe, 1
 
