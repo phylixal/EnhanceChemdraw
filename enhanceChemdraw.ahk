@@ -3,8 +3,10 @@
 ; autohotkey_L 1.1.10.1
 fileinstall, wget.exe, wget.exe, 1
 
-
-#ifWinActive ChemDraw Professional ahk_class CSWFrame
+SetTitleMatchMode RegEx 
+#ifWinActive Chem.*Draw ahk_class CSWFrame
+; detecte the Chemdraw or chemBioDraw window
+; #ifWinActive ChemDraw Professional ahk_class CSWFrame
 
 F2::    ;show the Analysis window
 send !vss{enter}
