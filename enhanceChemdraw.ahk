@@ -73,8 +73,9 @@ return
 ; 转换为inchi
 ;http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/936-58-3/property/InChI/txt
 
+
 PubchemGetInchi(name){
-	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" name "/property/InChI/txt"
+	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" uriEncode(name) "/property/InChI/txt"
 	Filedelete, tmp.txt
 	cmd = wget `"%url%`"  -O tmp.txt  
 	;msgbox, % cmd
@@ -88,7 +89,8 @@ PubchemGetInchi(name){
 	return inchi
 }
 PubchemGetCas(smiles){
-	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/" smiles "/synonyms/TXT"
+	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/" uriEncode(smiles) "/synonyms/TXT"
+;	msgbox, % url
 	Filedelete, castmp.txt
 	cmd = wget `"%url%`"  -O castmp.txt  
 	RunWait, %comspec% /c %cmd%, , min
@@ -101,7 +103,7 @@ PubchemGetCas(smiles){
 	return CasRNList
 }
 PubchemGetInchiAll(name){
-	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" name "/property/InChI/txt"
+	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" uriEncode(name) "/property/InChI/txt"
 	Filedelete, tmp.txt
 	cmd = wget `"%url%`"  -O tmp.txt  
 	;msgbox, % cmd
@@ -115,4 +117,32 @@ PubchemGetInchiAll(name){
 	sleep, 30
 	return inchis
 }
+uriEncode(str) {  
+    StringReplace, str, str, `%, `%25, All  
+	StringReplace, str, str, #, `%23, All  
+	return, str
+} 
 
+/*
+uriEncode(str) {  
+   f = %A_FormatInteger%  
+   SetFormat, Integer, Hex  
+   If RegExMatch(str, "^\w+:/{0,2}", pr)  
+      StringTrimLeft, str, str, StrLen(pr)  
+   StringReplace, str, str, `%, `%25, All  
+   Loop  
+      If RegExMatch(str, "i)[^\w\.~%]", char)  
+         StringReplace, str, str, %char%, % "%" . Asc(char), All  
+      Else Break  
+   SetFormat, Integer, %f%  
+   Return, pr . str  
+}  
+uriDecode(str) {  
+   Loop  
+      If RegExMatch(str, "i)(?<=%)[\da-f]{1,2}", hex)  
+         StringReplace, str, str, `%%hex%, % Chr("0x" . hex), All  
+      Else Break  
+   Return, str  
+}    
+
+*/
