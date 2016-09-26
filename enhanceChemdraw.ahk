@@ -11,21 +11,55 @@ SetTitleMatchMode RegEx
 F2::    ;show the Analysis window
 send !vss{enter}
 return
-
+/*
 F6::    ;structure to cas number, convert smiles to casrn using pubchem
 ;WinMenuSelectItem, A, ,2&, 9&, 1&   ;copy smiles
 send ^!c
-ClipWait
+ClipWait, 2
 sleep, 100
 ;msgbox, %Clipboard%
 clipboard := PubchemGetCas(clipboard)
 send ^v
 ;send {Appskey}{Down 5}{Enter}
 return
++F6::    ;name to cas number, convert name to casrn using pubchem
+send ^c
+ClipWait, 2
+sleep, 100
+;msgbox, %Clipboard%
+clipboard := PubchemGetCasByName(clipboard)
+send ^v
+return
+*/
+
+F6::    ;structure or name to cas number
+ClipSaved := ClipboardAll 
+Clipboard := 
+send ^c
+ClipWait, 2
+name = %Clipboard%
+if (name == "") {
+	;msgbox, %Clipboard%
+	send !eon{enter}    ;copy inchi
+	ClipWait, 2
+	; convert inchi to casrn
+	clipboard := PubchemGetCasByInchi(clipboard)
+} else {
+	; convert name to casrn
+	clipboard := PubchemGetCasByName(clipboard)
+}
+send ^v
+sleep, 100
+Clipboard := ClipSaved   ; Restore the original clipboard. 
+ClipSaved =   ; Free the memory in case the clipboard was very large.
+return
+
 
 ^F6::    ; casrn number or names to structure, only get the first one
+ClipSaved := ClipboardAll 
+Clipboard := 
 send ^c
-ClipWait
+ClipWait, 2
 ;clipboard := cactus(clipboard, "smiles")
 clipboard := PubchemGetInchi(clipboard)
 ;;paste inchi
@@ -34,11 +68,16 @@ send !esi{enter}
 sleep, 50
 send, ^g
 ;WinMenuSelectItem, A, ,2&, 10&, 3&   
+sleep, 100
+Clipboard := ClipSaved   ; Restore the original clipboard. 
+ClipSaved =   ; Free the memory in case the clipboard was very large.
 return
 
 +F6::       ;names and casrn to structure, post all matched structure
+ClipSaved := ClipboardAll 
+Clipboard := 
 send ^c
-ClipWait
+ClipWait, 2
 inchis := PubchemGetInchiAll(clipboard)
 ;msgbox, % inchis
 loop, parse, inchis, `n, `r%A_Space%%A_Tab% 
@@ -52,9 +91,10 @@ loop, parse, inchis, `n, `r%A_Space%%A_Tab%
 	send, ^g
 	sleep, 50
 }
+sleep, 100
+Clipboard := ClipSaved   ; Restore the original clipboard. 
+ClipSaved =   ; Free the memory in case the clipboard was very large.
 return
-
-
 
 
 #ifWinActive 
@@ -73,9 +113,8 @@ return
 ; 转换为inchi
 ;http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/936-58-3/property/InChI/txt
 
-
 PubchemGetInchi(name){
-	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" uriEncode(name) "/property/InChI/txt"
+	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" Encode(name) "/property/InChI/txt"
 	Filedelete, tmp.txt
 	cmd = wget `"%url%`"  -O tmp.txt  
 	;msgbox, % cmd
@@ -88,13 +127,40 @@ PubchemGetInchi(name){
 	sleep, 30
 	return inchi
 }
-PubchemGetCas(smiles){
-	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/" uriEncode(smiles) "/synonyms/TXT"
-;	msgbox, % url
-	Filedelete, castmp.txt
-	cmd = wget `"%url%`"  -O castmp.txt  
+PubchemGetCasByName(name){
+	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" uriEncode(name) "/synonyms/TXT"
+	Filedelete, tmp.txt
+	cmd = wget `"%url%`"  -O tmp.txt  
 	RunWait, %comspec% /c %cmd%, , min
-	FileRead, Synonyms, castmp.TXT
+	FileRead, Synonyms, tmp.TXT
+	;以上获取名字列表
+	;msgbox % Synonyms 
+	sleep, 30
+	RegExMatch(Synonyms, "\d{2,7}-\d\d-\d", CasRNList) 
+	;msgbox, % CasRNList
+	return CasRNList
+}
+PubchemGetCasByInchi(inchi){
+	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/InChI/synonyms/TXT?inchi=" uriEncode(inchi)
+;	msgbox, % url
+	Filedelete, tmp.txt
+	cmd = wget `"%url%`"  -O tmp.txt  
+	RunWait, %comspec% /c %cmd%, , min
+	FileRead, Synonyms, tmp.TXT
+	;以上获取名字列表
+	;msgbox % Synonyms 
+	sleep, 30
+	RegExMatch(Synonyms, "\d{2,7}-\d\d-\d", CasRNList) 
+	;msgbox, % CasRNList
+	return CasRNList
+}
+PubchemGetCas(smiles){
+	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/" Encode(smiles) "/synonyms/TXT"
+;	msgbox, % url
+	Filedelete, tmp.txt
+	cmd = wget `"%url%`"  -O tmp.txt  
+	RunWait, %comspec% /c %cmd%, , min
+	FileRead, Synonyms, tmp.TXT
 	;以上获取名字列表
 	;msgbox % Synonyms 
 	sleep, 30
@@ -103,7 +169,7 @@ PubchemGetCas(smiles){
 	return CasRNList
 }
 PubchemGetInchiAll(name){
-	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" uriEncode(name) "/property/InChI/txt"
+	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" Encode(name) "/property/InChI/txt"
 	Filedelete, tmp.txt
 	cmd = wget `"%url%`"  -O tmp.txt  
 	;msgbox, % cmd
@@ -117,13 +183,14 @@ PubchemGetInchiAll(name){
 	sleep, 30
 	return inchis
 }
-uriEncode(str) {  
+Encode(str) {  
     StringReplace, str, str, `%, `%25, All  
 	StringReplace, str, str, #, `%23, All  
+	StringReplace, str, str, /, `%2f, All  
 	return, str
 } 
 
-/*
+;msgbox, % uriEncode("CN1C[C@@](CO)([H])C=C2C3=C4C(C[C@]21[H])=CNC4=CC=C3")
 uriEncode(str) {  
    f = %A_FormatInteger%  
    SetFormat, Integer, Hex  
@@ -132,7 +199,7 @@ uriEncode(str) {
    StringReplace, str, str, `%, `%25, All  
    Loop  
       If RegExMatch(str, "i)[^\w\.~%]", char)  
-         StringReplace, str, str, %char%, % "%" . Asc(char), All  
+         StringReplace, str, str, %char%, % "%" . SubStr(Asc(char), 3, 2), All  
       Else Break  
    SetFormat, Integer, %f%  
    Return, pr . str  
@@ -145,4 +212,4 @@ uriDecode(str) {
    Return, str  
 }    
 
-*/
+
