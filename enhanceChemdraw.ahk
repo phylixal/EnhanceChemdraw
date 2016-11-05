@@ -115,12 +115,12 @@ return
 
 PubchemGetInchi(name){
 	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" Encode(name) "/property/InChI/txt"
-	Filedelete, tmp.txt
-	cmd = wget `"%url%`"  -O tmp.txt  
+	Filedelete, %A_ScriptDir%\tmp.txt
+	cmd = wget --no-check-certificate  `"%url%`"  -O %A_ScriptDir%\tmp.txt  
 	;msgbox, % cmd
 	RunWait, %comspec% /c %cmd%, , min
 	sleep, 30
-	FileReadline, inchi, tmp.TXT, 1
+	FileReadline, inchi, %A_ScriptDir%\tmp.txt, 1
 	;msgbox % inchi
 	;StringReplace, inchi, inchi, `n, , All
 	;msgbox % inchi
@@ -129,10 +129,10 @@ PubchemGetInchi(name){
 }
 PubchemGetCasByName(name){
 	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" uriEncode(name) "/synonyms/TXT"
-	Filedelete, tmp.txt
-	cmd = wget `"%url%`"  -O tmp.txt  
+	Filedelete, %A_ScriptDir%\tmp.txt
+	cmd = wget --no-check-certificate  `"%url%`"  -O %A_ScriptDir%\tmp.txt  
 	RunWait, %comspec% /c %cmd%, , min
-	FileRead, Synonyms, tmp.TXT
+	FileRead, Synonyms, %A_ScriptDir%\tmp.txt
 	;以上获取名字列表
 	;msgbox % Synonyms 
 	sleep, 30
@@ -143,10 +143,10 @@ PubchemGetCasByName(name){
 PubchemGetCasByInchi(inchi){
 	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/InChI/synonyms/TXT?inchi=" uriEncode(inchi)
 ;	msgbox, % url
-	Filedelete, tmp.txt
-	cmd = wget `"%url%`"  -O tmp.txt  
+	Filedelete, %A_ScriptDir%\tmp.txt
+	cmd = wget --no-check-certificate  `"%url%`"  -O %A_ScriptDir%\tmp.txt  
 	RunWait, %comspec% /c %cmd%, , min
-	FileRead, Synonyms, tmp.TXT
+	FileRead, Synonyms, %A_ScriptDir%\tmp.txt
 	;以上获取名字列表
 	;msgbox % Synonyms 
 	sleep, 30
@@ -157,10 +157,10 @@ PubchemGetCasByInchi(inchi){
 PubchemGetCas(smiles){
 	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/" Encode(smiles) "/synonyms/TXT"
 ;	msgbox, % url
-	Filedelete, tmp.txt
-	cmd = wget `"%url%`"  -O tmp.txt  
+	Filedelete, %A_ScriptDir%\tmp.txt
+	cmd = wget --no-check-certificate  `"%url%`"  -O %A_ScriptDir%\tmp.txt  
 	RunWait, %comspec% /c %cmd%, , min
-	FileRead, Synonyms, tmp.TXT
+	FileRead, Synonyms, %A_ScriptDir%\tmp.txt
 	;以上获取名字列表
 	;msgbox % Synonyms 
 	sleep, 30
@@ -170,12 +170,12 @@ PubchemGetCas(smiles){
 }
 PubchemGetInchiAll(name){
 	url := "http://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/" Encode(name) "/property/InChI/txt"
-	Filedelete, tmp.txt
-	cmd = wget `"%url%`"  -O tmp.txt  
+	Filedelete, %A_ScriptDir%\tmp.txt
+	cmd = wget --no-check-certificate  `"%url%`"  -O %A_ScriptDir%\tmp.txt  
 	;msgbox, % cmd
 	RunWait, %comspec% /c %cmd%, , min
 	sleep, 30
-	FileRead, inchis, tmp.TXT
+	FileRead, inchis, %A_ScriptDir%\tmp.txt
 	;可能返回多个，只使用第一行
 	;msgbox % inchi
 	;StringReplace, inchi, inchi, `n, , All
